@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-
 class ModelTest {
 
   @Test
@@ -30,6 +29,8 @@ class ModelTest {
       modelMockedStatic.when(Model::staticIntMethodNoParameters).thenCallRealMethod();
       Model.staticIntMethodNoParameters();
       modelMockedStatic.verify(() -> Model.staticIntMethodNoParameters(), times(1));
+      modelMockedStatic.when(Model::staticIntMethodNoParameters).thenReturn(43);
+      assertEquals(43, Model.staticIntMethodNoParameters());
     }
   }
 
@@ -42,6 +43,8 @@ class ModelTest {
       modelMockedStatic.when(() -> Model.staticIntMethodWithIntParameter(anyInt())).thenCallRealMethod();
       Model.staticIntMethodWithIntParameter(42);
       modelMockedStatic.verify(() -> Model.staticIntMethodWithIntParameter(eq(42)), times(1));
+      modelMockedStatic.when(() -> Model.staticIntMethodWithIntParameter(anyInt())).thenReturn(43);
+      assertEquals(43, Model.staticIntMethodWithIntParameter(123));
     }
   }
 
@@ -68,6 +71,9 @@ class ModelTest {
     doCallRealMethod().when(mockModel).intMethodWithNoParameters();
     mockModel.intMethodWithNoParameters();
     verify(mockModel, times(1)).intMethodWithNoParameters();
+    Mockito.clearInvocations(mockModel);
+    when(mockModel.intMethodWithNoParameters()).thenReturn(43);
+    assertEquals(43, mockModel.intMethodWithNoParameters());
   }
 
   @Test
@@ -76,5 +82,7 @@ class ModelTest {
     doCallRealMethod().when(mockModel).intMethodWithIntParameter(anyInt());
     mockModel.intMethodWithIntParameter(42);
     verify(mockModel, times(1)).intMethodWithIntParameter(eq(42));
+    when(mockModel.intMethodWithIntParameter(anyInt())).thenReturn(43);
+    assertEquals(43, mockModel.intMethodWithIntParameter(123));
   }
 }
